@@ -1,3 +1,4 @@
+library(nnet)
 library(imager)
 library(ssoftveR)
 script.dir <- dirname(sys.frame(1)$ofile)
@@ -8,7 +9,7 @@ decolor <- function(im) {
   as.cimg(3 * thr[ , , 1, 1] + 2 * thr[ , , 1, 2] + thr[ , , 1, 3])
 }
 
-files <- Sys.glob("~/projects/stats/ss4/mines_img/*.png")
+files <- Sys.glob(paste(script.dir, "mines_img/*.png", sep = '/'))
 images <- lapply(files, load.image)
 
 cat("Loaded images\n")
@@ -26,7 +27,7 @@ rm(ext_fields)
 rm(fields_combined)
 
 # Manual setting classes for training set
-tr_fname <- "~/projects/stats/ss4/tr_cls.RDS"
+tr_fname <- paste(script.dir, "tr_cls.RDS", sep = '/')
 tr_cls <- character(length(fields))
 if (file.exists(tr_fname))
   tr_cls <- readRDS(tr_fname)
@@ -60,4 +61,12 @@ rm(ext_fields)
 
 tr_preds <- get_field_predictors(predictors, fields, FALSE)
 cat("Calculated predictors\n")
+
+
+# genetare training dataframe
+dat <- cbind(tr_preds, class = tr_cls)
+
+mines_model <- multinom(class ~ . , data = dat, maxit = 1000)
+
+saveRDS(mines_model, paste(script.dir, "mines_model.RDS", sep = '/'))
 
