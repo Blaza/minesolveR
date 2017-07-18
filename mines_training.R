@@ -45,7 +45,7 @@ cat("Finished manual entry\n")
 
 # Calculate predictors for fields
 
-predictors <- c("white_area", "widths_variance")
+predictors <- c("row_dominant_mode", "col_dominant_mode")
 
 process_img <- function(im) im %>% isoblur(., 2.16) %>% binary
 
@@ -63,10 +63,12 @@ tr_preds <- get_field_predictors(predictors, fields, FALSE)
 cat("Calculated predictors\n")
 
 
+cat("Creating multinom model\n")
 # genetare training dataframe
 dat <- cbind(tr_preds, class = tr_cls)
 
 mines_model <- multinom(class ~ . , data = dat, maxit = 1000)
 
 saveRDS(mines_model, paste(script.dir, "mines_model.RDS", sep = '/'))
+cat("ALL DONE\n")
 
