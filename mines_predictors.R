@@ -38,6 +38,15 @@ binary <- function(im, thr = 4/7) {
   }
 }
 
+#' The image preprocessing function
+#'
+#' This function is used on the board image before calculating predictors
+#'
+#' @param im - the image to process
+#' @return The processed image
+process_img <- function(im) im %>% isoblur(., 2.16) %>% binary
+
+
 #' Get density dominant mode location
 #'
 #' @param x - the vector for which to get dominant mode of the density

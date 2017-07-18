@@ -47,8 +47,6 @@ cat("Finished manual entry\n")
 
 predictors <- c("row_dominant_mode", "col_dominant_mode")
 
-process_img <- function(im) im %>% isoblur(., 2.16) %>% binary
-
 ext_fields <- lapply(images, function(im)
                    extract_fields(process_img(im), get_boundaries(decolor(im))))
 
