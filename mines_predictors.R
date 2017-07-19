@@ -87,3 +87,39 @@ col_dominant_mode <- function(im) {
   dmode(colMeans(bin[,,1,1]))
 }
 
+
+curve_length <- function(curve) {
+  sum(sqrt(diff(curve$x)^2 + diff(curve$y)^2))
+}
+
+x_arc_length <- function(im) {
+   im <- clip(im, c("20%", "10%", "18%", "10%"))
+   bin <- !binary(im)
+
+   if (all(bin == FALSE)) {
+     xy <- expand.grid(x = c(-2:0, 2:4), y = 1:10)
+   } else {
+     xy <- scale(where(bin))
+   }
+
+   xy <- as.data.frame(xy)
+
+   xd <- density(xy[,1])
+   curve_length(xd)
+}
+
+y_arc_length <- function(im) {
+   im <- clip(im, c("20%", "10%", "18%", "10%"))
+   bin <- !binary(im)
+
+   if (all(bin == FALSE)) {
+     xy <- expand.grid(x = c(-2:0, 2:4), y = 1:10)
+   } else {
+     xy <- scale(where(bin))
+   }
+
+   xy <- as.data.frame(xy)
+
+   yd <- density(xy[,2])
+   curve_length(yd)
+}

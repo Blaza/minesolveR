@@ -45,7 +45,7 @@ cat("Finished manual entry\n")
 
 # Calculate predictors for fields
 
-predictors <- c("row_dominant_mode", "col_dominant_mode")
+predictors <- c("x_arc_length", "y_arc_length")
 
 ext_fields <- lapply(images, function(im) {
                    im <- im %>% resize(780, 780)
@@ -69,6 +69,6 @@ dat <- cbind(tr_preds, class = tr_cls)
 
 mines_model <- multinom(class ~ . , data = dat, maxit = 1000)
 
-saveRDS(mines_model, paste(script.dir, "mines_model.RDS", sep = '/'))
+#saveRDS(mines_model, paste(script.dir, "mines_model.RDS", sep = '/'))
 cat("ALL DONE\n")
 

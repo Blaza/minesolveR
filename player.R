@@ -26,7 +26,7 @@ best_move_gen <- function() {
       print("Guessing")
       move_stack <<- which(board == "z", arr.ind = TRUE)[1, , drop = FALSE]
     }
-    
+
     # get the first element from the stack and remove it from the stack
     next_move <<- move_stack[1, , drop = FALSE]
     move_stack <<- move_stack[-1, , drop = FALSE]
