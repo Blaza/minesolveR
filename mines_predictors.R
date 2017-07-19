@@ -68,7 +68,7 @@ row_dominant_mode <- function(im) {
   bin <- binary(im)
   # clip the field image.
   # This ratio has been found to give nice results
-  bin <- clip(!bin, c("20%", "10%", "20%", "10%"))
+  bin <- clip(!bin, c("25%", "15%", "25%", "15%"))
 
   dmode(rowMeans(bin[,,1,1]))
 }
@@ -82,7 +82,7 @@ col_dominant_mode <- function(im) {
   bin <- binary(im)
   # clip the field image.
   # This ratio has been found to give nice results
-  bin <- clip(!bin, c("20%", "10%", "20%", "10%"))
+  bin <- clip(!bin, c("25%", "15%", "25%", "15%"))
 
   dmode(colMeans(bin[,,1,1]))
 }

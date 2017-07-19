@@ -47,8 +47,10 @@ cat("Finished manual entry\n")
 
 predictors <- c("row_dominant_mode", "col_dominant_mode")
 
-ext_fields <- lapply(images, function(im)
-                   extract_fields(process_img(im), get_boundaries(decolor(im))))
+ext_fields <- lapply(images, function(im) {
+                   im <- im %>% resize(780, 780)
+                   extract_fields(process_img(im), get_boundaries(decolor(im)))
+              })
 
 fields <- do.call(c, ext_fields)
 cat("Extracted fields for predictor calculation\n")
