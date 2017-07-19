@@ -93,7 +93,7 @@ curve_length <- function(curve) {
 }
 
 x_arc_length <- function(im) {
-   im <- clip(im, c("20%", "10%", "18%", "10%"))
+   im <- clip(im, c("20%", "10%", "19%", "10%"))
    bin <- !binary(im)
 
    if (all(bin == FALSE)) {
@@ -109,7 +109,7 @@ x_arc_length <- function(im) {
 }
 
 y_arc_length <- function(im) {
-   im <- clip(im, c("20%", "10%", "18%", "10%"))
+   im <- clip(im, c("20%", "10%", "19%", "10%"))
    bin <- !binary(im)
 
    if (all(bin == FALSE)) {
