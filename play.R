@@ -3,6 +3,8 @@ script.dir <- dirname(sys.frame(1)$ofile)
 setwd(script.dir)
 source(paste(script.dir, 'player.R', sep='/'))
 
+dir.create(paste(script.dir, 'screens', sep='/'), showWarnings = FALSE)
+
 fname <- function(i) {
   paste0("screens/screen",i,".png")
 }
