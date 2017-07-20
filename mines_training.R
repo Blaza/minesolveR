@@ -29,8 +29,10 @@ rm(fields_combined)
 # Manual setting classes for training set
 tr_fname <- paste(script.dir, "tr_cls.RDS", sep = '/')
 tr_cls <- character(length(fields))
-if (file.exists(tr_fname))
-  tr_cls <- readRDS(tr_fname)
+if (file.exists(tr_fname)) {
+  tr_cls_tmp <- readRDS(tr_fname)
+  tr_cls[1:length(tr_cls_tmp)] <- tr_cls_tmp
+}
 
 cat("Beginning manual entry\n")
 for (i in 1:length(tr_cls)) {
@@ -49,7 +51,8 @@ predictors <- c("x_arc_length", "y_arc_length")
 
 ext_fields <- lapply(images, function(im) {
                    im <- im %>% resize(780, 780)
-                   extract_fields(process_img(im), get_boundaries(decolor(im)))
+                   extract_fields(process_img(im),
+                                  get_boundaries(decolor(im), prob = 0.95))
               })
 
 fields <- do.call(c, ext_fields)
@@ -69,6 +72,6 @@ dat <- cbind(tr_preds, class = tr_cls)
 
 mines_model <- multinom(class ~ . , data = dat, maxit = 1000)
 
-#saveRDS(mines_model, paste(script.dir, "mines_model.RDS", sep = '/'))
+saveRDS(mines_model, paste(script.dir, "mines_model.RDS", sep = '/'))
 cat("ALL DONE\n")
 

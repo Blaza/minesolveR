@@ -8,7 +8,8 @@ read_board <- function(im) {
   predictors <- c("x_arc_length", "y_arc_length")
   im <- im %>% resize(780, 780)
 
-  fields <- extract_fields(process_img(im), get_boundaries(decolor(im)))
+  fields <- extract_fields(process_img(im),
+                           get_boundaries(decolor(im), prob = 0.95))
   preds <- get_field_predictors(predictors, fields)
 
   classes <- predict(mines_model, preds)
