@@ -1,6 +1,7 @@
 suppressWarnings(library(imager, warn.conflicts = FALSE, quietly=TRUE))
 script.dir <- dirname(sys.frame(1)$ofile)
 setwd(script.dir)
+source(paste(script.dir, 'player.R', sep='/'))
 
 fname <- function(i) {
   paste0("screens/screen",i,".png")
