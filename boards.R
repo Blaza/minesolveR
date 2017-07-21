@@ -32,7 +32,7 @@ generate_board <- function(dims, mines) {
 }
 
 
-valid_board <- function(board) {
+valid_board <- function(board, mines =  NULL) {
   # This is basically a inverse process of generate_board.
 
   # get neighbourhoods matrix for the board
@@ -51,7 +51,14 @@ valid_board <- function(board) {
   # a board is valid iff the number of mines surrounding a field is the same
   # as the number written on the field or if there are closed fields, the sum
   # of mines and closed fields must be higher than the number on the field
-  all(mine_counts <= board[open_non_mines] &
-      board[open_non_mines] <= mine_counts + closed_counts)
+  valid <- all(mine_counts <= board[open_non_mines] &
+               board[open_non_mines] <= mine_counts + closed_counts)
+
+  if(!is.null(mines)) {
+    valid <- valid && sum(board == "m") <= mines &&
+                      sum(board %in% c("m", "z")) >= mines
+  }
+
+  valid
 }
 

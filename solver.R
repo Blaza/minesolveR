@@ -85,6 +85,12 @@ basic_solve <- function(board, mines) {
     board <- board %>% find_non_mines %>% find_sure_mines
   }
 
+  # check if we got a valid board for specified number of mines
+  if (!valid_board(board, mines)) {
+    attr(board, "invalid") <- TRUE
+    return(board)
+  }
+
   # check if maybe we found all mines, then all other fields are not mines
   if (mines == sum(board == "m"))
     board[board == "z"] <- "n"
@@ -101,6 +107,9 @@ basic_solve <- function(board, mines) {
 contradiction_solve <- function(board, mines) {
   if (!valid_board(board)) {
     attr(board, "invalid") <- TRUE
+    return(board)
+  } else if (sum(board == "z") == 0) {
+    # the board is already solved
     return(board)
   }
 
@@ -155,6 +164,6 @@ contradiction_solve <- function(board, mines) {
 
 
 solve_board <- function(board, mines) {
-  board %>% basic_solve(., mines) %>% contradiction_solve(., mines)
+  board %>% basic_solve(mines) %>% contradiction_solve(mines)
 }
 
