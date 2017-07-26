@@ -167,3 +167,49 @@ solve_board <- function(board, mines) {
   board %>% basic_solve(mines) %>% contradiction_solve(mines)
 }
 
+
+# probabiliy that a board is valid if there is a minne put
+valid_probs <- function(board, mines, n = 1e3, pre_solve = FALSE) {
+  if (pre_solve)
+    board <- solve_board(board, mines)
+
+  # initialise a matrix which will hold probailities
+  prob_board <- numeric(prod(dim(board)))
+  dim(prob_board) <- dim(board)
+
+  closed_inds <- which(board == "z")
+
+  probs <- sapply(closed_inds, function(ind, board, mines, n) {
+               # set the current field to a mine
+               board[ind] <- "m"
+               mines_left <- mines - sum(board == "m")
+
+               # get values indicating whether the board is valid if we set a
+               # mine at ind
+               vals <- replicate(n, {
+                           # get indices of closed fields
+                           closed <- which(board == "z")
+                           # set remaining mines randomly on those closed fields
+                           board[sample(closed, mines_left)] <- "m"
+                           # set all other fields to non-mine
+                           board[board == "z"] <- "n"
+
+                           valid_board(board, mines)
+                       })
+               # return the probability of there being a mine, i.e. the number
+               # of times the board was valid given a mine was there
+               mean(vals)
+           }, board, mines, n)
+
+  # populate fields with probabilities of there being a mine
+  prob_board[closed_inds] <- probs
+
+  # on sure non-mines, the probability of a mine is 0
+  prob_board[!(board %in% c("m", "z"))] = 0
+
+  # on sure mines, the probability of a mine is 1
+  prob_board[board == "m"] = 1
+
+  round(prob_board, 2)
+}
+
