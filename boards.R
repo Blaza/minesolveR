@@ -64,8 +64,10 @@ valid_board <- function(board, mines =  NULL) {
 
 
 hide_random <- function(board, field_count) {
-  hide_inds <- sample(prod(dim(board)), field_count)
+  non_mines <- which(board != "m")
+  hide_inds <- sample(non_mines, field_count)
 
+  board[board == "m"] <- "z"
   board[hide_inds] <- "z"
 
   board
