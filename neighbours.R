@@ -1,3 +1,9 @@
+#' Get the neighbourhood matrix of a board
+#'
+#' @param board - the board for which to create a neighbourhood matrix
+#' @return A neighbourhood matrix of the board. A neighbourhood matrix is a
+#'         matrix with each row containing all fields surrounding the current
+#'         field, which is put in the middle (at index 5) of the row
 get_neighbour_matrix <- function(board) {
   # get each fields' neighbourhood in rows (we slide the matrix in all
   # directions and combine them into a matrix using slide_matrix from ssoftveR)
@@ -17,6 +23,13 @@ get_neighbour_matrix <- function(board) {
 }
 
 
+#' Get the index structure a neighbourhood matrix
+#'
+#' @param neimat - the neighbourhood matrix for which to get the index structure
+#' @return The index striture matrix of neimat. The index structure is a matrix
+#'         of the same dimension as neimat, where each field represents the
+#'         index of that element in the original board. It is used for updating
+#'         the whole neighbourhood matrix at the same time.
 get_index_structure <- function(neimat) {
   h <- attr(neimat, "board_dim")[1]
   w <- attr(neimat, "board_dim")[2]
@@ -51,19 +64,35 @@ get_index_structure <- function(neimat) {
 }
 
 
+#' Update the neighbourhood matrix
+#'
+#' @param neimat - the neighbourhood matrix to update
+#' @param value - the value with which to update
+#' @param coords - the matrix of coordinates in neimat of fields which should
+#'                 be updated
+#' @return The updated neimat. It takes all fields specified with coords and
+#'         sets all of their occurences in neimat (using the index structure)
+#'         to 'value'
 update_neighbour_matrix <- function(neimat, value, coords) {
   index_structure <- get_index_structure(neimat)
 
+  # get board indices of fields given by coords using the index structure
   covered_indices <- na.omit(index_structure[as.matrix(coords)])
 
+  # get indices of all occurences of those fields in neimat
   indices <- which(index_structure %in% covered_indices)
 
+  # set them to value
   neimat[indices] <- value
 
   neimat
 }
 
 
+#' Extract the board from the neighbourhood matrix
+#'
+#' @param neimat - the neighbourhood matrix to extract the board from
+#' @return The board for which neimat is the neighbourhood matrix.
 board_from_neighbour <- function(neimat) {
   h <- attr(neimat, "board_dim")[1]
   matrix(neimat[ , 5], nrow = h)

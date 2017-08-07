@@ -2,6 +2,10 @@ library(magrittr)
 script.dir <- dirname(sys.frame(1)$ofile)
 source(paste(script.dir, 'boards.R', sep='/'))
 
+#' Mark fields which are surely not mines
+#'
+#' @param board - the board to solve
+#' @return A board with marked sure non-mine fields
 find_non_mines <- function(board) {
   if (!valid_board(board)) {
     attr(board, "invalid") <- TRUE
@@ -36,6 +40,10 @@ find_non_mines <- function(board) {
 }
 
 
+#' Mark fields which are surely mines
+#'
+#' @param board - the board to solve
+#' @return A board with marked sure mines
 find_sure_mines <- function(board) {
   # This function is basically the same as find_non_mines, just the logic of
   # checking solvable fields is different
@@ -74,6 +82,13 @@ find_sure_mines <- function(board) {
 }
 
 
+#' Solve the board using basic logic
+#'
+#' Solves all fields that it can by using the basic rules of the game
+#'
+#' @param board - the board to solve
+#' @param mines - the number of mines on the board
+#' @return A (partially) solved board
 basic_solve <- function(board, mines) {
   # create (for now) empty partially solved board the same size as board
   partial <- character(prod(dim(board)))
@@ -104,6 +119,14 @@ basic_solve <- function(board, mines) {
 }
 
 
+#' Solve the board using contradiction logic
+#'
+#' Solves all fields that it can by trying to put a mine (or non mine) to each
+#' field and seeing if that leads to an invalid board after basic solving
+#'
+#' @param board - the board to solve
+#' @param mines - the number of mines on the board
+#' @return A (partially) solved board
 contradiction_solve <- function(board, mines) {
   if (!valid_board(board)) {
     attr(board, "invalid") <- TRUE
@@ -163,11 +186,26 @@ contradiction_solve <- function(board, mines) {
 }
 
 
+#' Solve the board using basic and contradiction logic
+#'
+#' Solves all fields that it can
+#'
+#' @param board - the board to solve
+#' @param mines - the number of mines on the board
+#' @return A (partially) solved board
 solve_board <- function(board, mines) {
   board %>% basic_solve(mines) %>% contradiction_solve(mines)
 }
 
 
+#' Get the probabilities of mines being in closed fields
+#'
+#' @param board - the board to use
+#' @param mines - the number of mines in the board
+#' @param n - the sample size to use for probabiliy estimation
+#' @param pre_solve - whether to run solve_board at the beginning
+#' @return A matrix of the same dimension as board, with each element being
+#'         the probability that a mine is on the respective field
 mine_probs <- function(board, mines, n = 1e3, pre_solve = FALSE) {
   if (pre_solve)
     board <- solve_board(board, mines)
@@ -176,23 +214,37 @@ mine_probs <- function(board, mines, n = 1e3, pre_solve = FALSE) {
   prob_matrix <- numeric(prod(dim(board)))
   dim(prob_matrix) <- dim(board)
 
+  # get how many mines are left to be found
   mines_left <- mines - sum(board == "m")
 
+  # get indices of closed fields
   closed_inds <- which(board == "z")
 
+  # create a sample of n configurations of spreading the remaining mines on the
+  # remaining closed fields. A configuration is a vector of inndices of fields
+  # where to put the mines.
   mine_smp <- replicate(n, sample(closed_inds, mines_left), simplify = FALSE)
 
+  # get the logical vector indicating whether the suggested configuration in
+  # each mine_smp element gives a valid board
   valid_smp <- sapply(mine_smp, function(inds, board, mines) {
                         board[inds] <- "m"
                         board[board == "z"] <- "n"
                         valid_board(board, mines)
                }, board, mines)
 
+  # To get the probabilities of mines being in each field, we subset mine_smp
+  # to get only valid board samples and then unlist the subset into a vector
+  # after which we get the number of appearances of each index in valid boards
+  # and dividing that by the number of valid samples to get the probabilities
   prob_mines <- table(unlist(mine_smp[valid_smp])) / sum(valid_smp)
 
+  # Populate the probabilty matrix with caluclated probabilities
   prob_matrix[as.numeric(names(prob_mines))] <- prob_mines
 
+  # the probability of a field with a mine is 1...
   prob_matrix[board == "m"] <- 1
+  # ... and of a field which is not a mine (nor closed) is 0
   prob_matrix[!(board %in% c("m", "z"))] <- 0
 
   prob_matrix

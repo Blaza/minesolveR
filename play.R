@@ -10,7 +10,8 @@ fname <- function(i) {
 }
 
 make_move <- function(i, j, cnt, anim=FALSE, wait_time=100) {
-  system2("automine.exe", c(i, j, fname(cnt), ifelse(anim,"anim","noanim"), wait_time), stdout = TRUE)
+  system2("automine.exe", c(i, j, fname(cnt), ifelse(anim,"anim","noanim"),
+                            wait_time), stdout = TRUE)
 }
 
 best_move <- best_move_gen()
