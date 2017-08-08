@@ -3,11 +3,6 @@ library(imager)
 library(ssoftveR)
 script.dir <- dirname(sys.frame(1)$ofile)
 source(paste(script.dir, 'mines_predictors.R', sep='/'))
-# see mines_predictors.R
-decolor <- function(im) {
-  thr <- im %>% threshold
-  as.cimg(3 * thr[ , , 1, 1] + 2 * thr[ , , 1, 2] + thr[ , , 1, 3])
-}
 
 files <- Sys.glob(paste(script.dir, "mines_img/*.png", sep = '/'))
 images <- lapply(files, load.image)
@@ -72,6 +67,6 @@ dat <- cbind(tr_preds, class = tr_cls)
 
 mines_model <- multinom(class ~ . , data = dat, maxit = 1000)
 
-saveRDS(mines_model, paste(script.dir, "mines_model.RDS", sep = '/'))
+#saveRDS(mines_model, paste(script.dir, "mines_model.RDS", sep = '/'))
 cat("ALL DONE\n")
 
