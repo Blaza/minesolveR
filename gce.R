@@ -6,7 +6,7 @@ source(paste(script.dir, 'solver.R', sep='/'))
 #' @param auth_file - the Google Compute Engine Service account key json file
 #'                    to use for authentication. Full path should be given.
 #' @param n - the number of boards to create to approximate the probabilities
-get_solving_probs <- function(auth_file, n = 160) {
+get_solving_probs <- function(auth_file, n = 208) {
   # if an auth file is given, use it
   if(!missing(auth_file))
     Sys.setenv("GCE_AUTH_FILE" = auth_file)
@@ -20,11 +20,11 @@ get_solving_probs <- function(auth_file, n = 160) {
   # boards for each dimension
   setup_dims <- list("d9x9" = list(boards = replicate(n, generate_board(9, 10),
                                                       simplify = FALSE),
-                                   hidden = seq(3, 30, 3)),
+                                   hidden = seq(3, 33, 3)),
                      "d16x16" = list(boards = replicate(n,
                                                         generate_board(16, 40),
                                                         simplify = FALSE),
-                                   hidden = seq(25, 70, 5)))
+                                   hidden = seq(10, 60, 5)))
 
   # Setting up the GCE instances
   cat("Launching VMs...\n")
@@ -35,20 +35,20 @@ get_solving_probs <- function(auth_file, n = 160) {
 
   # Create the instances for 9x9 and 16x16 board dimensions.
   # We create 2 instances (virtual machines), one will do the sampling and
-  # calculation for 9x9 boards (with 4 cpus, running in parallel) and the other
-  # for 16x16 boards (with 20 cpus, parallel). We chose 4 and 20 cpus after a
+  # calculation for 9x9 boards (with 8 cpus, running in parallel) and the other
+  # for 16x16 boards (with 16 cpus, parallel). We chose 8 and 16 cpus after a
   # bit of experimentation and turned out that that works nicely and finishes
-  # all jobs in about 10-15 minutes
-  vms <- list("d9x9" = gce_vm("d9x9", cpus = 4, memory = 3840,
+  # all jobs in about 10 minutes
+  vms <- list("d9x9" = gce_vm("d9x9", predefined_type = "n1-highcpu-8",
                               template = "r-base",
                               dynamic_image = gce_img_tag,
-                              scheduling = preemptible,
-                              predefined_type = "custom-4-3840"),
-              "d16x16" = gce_vm("d16x16", cpus = 20, memory = 18432,
+                              scheduling = preemptible
+                              ),
+              "d16x16" = gce_vm("d16x16", predefined_type = "n1-highcpu-16",
                               template = "r-base",
                               dynamic_image = gce_img_tag,
-                              scheduling = preemptible,
-                              predefined_type = "custom-20-18432"))
+                              scheduling = preemptible
+                              ))
 
   cat("Setting up SSH...\n")
   # we set up SSH access for the instances
