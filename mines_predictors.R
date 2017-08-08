@@ -47,79 +47,75 @@ binary <- function(im, thr = 4/7) {
 process_img <- function(im) im %>% isoblur(., 2.16) %>% binary
 
 
-#' Get density dominant mode location
-#'
-#' @param x - the vector for which to get dominant mode of the density
-#' @return The location of the dominant mode of the density(x). If multiple
-#'         modes are found, the mean location is taken.
-dmode <- function(x) {
-      den <- density(x, kernel = c("gaussian"))
-      mean(den$x[den$y == max(den$y)])
-}
-
-
 # The predictors part
 
-#' Location of the most frequent row
+#' Calculte the length of a curve
 #'
-#' @param im - the field image (will be converted to binary and clipped)
-#' @return The location of the dominant mode of rowMeans.
-row_dominant_mode <- function(im) {
-  bin <- binary(im)
-  # clip the field image.
-  # This ratio has been found to give nice results
-  bin <- clip(!bin, c("25%", "15%", "25%", "15%"))
-
-  dmode(rowMeans(bin[,,1,1]))
-}
-
-
-#' Location of the most frequent row
-#'
-#' @param im - the field image (will be converted to binary and clipped)
-#' @return The location of the dominant mode of colMeans.
-col_dominant_mode <- function(im) {
-  bin <- binary(im)
-  # clip the field image.
-  # This ratio has been found to give nice results
-  bin <- clip(!bin, c("25%", "15%", "25%", "15%"))
-
-  dmode(colMeans(bin[,,1,1]))
-}
-
-
+#' @param curve - a list with $x and $y elements representing the x and y
+#'                coordinates of all points of the curve ('discrete' curve)
+#' @return The arc length of the curve
 curve_length <- function(curve) {
   sum(sqrt(diff(curve$x)^2 + diff(curve$y)^2))
 }
 
+#' Calculate the arc length of the x-coordinate density curve
+#'
+#' @param im - the image representing the field to classify
+#' @return The arc length of the x-coordinate density of the number on the image
 x_arc_length <- function(im) {
-   im <- clip(im, c("20%", "10%", "19%", "10%"))
-   bin <- !binary(im)
+  # first we'll clip the image to remove the bordes and shades
+  im <- clip(im, c("20%", "10%", "19%", "10%"))
+  # then we binarize the image (it will probably already be binary but that
+  # doesn't change anything) and take the negative so the numbers are white
+  # instead of black on white background
+  bin <- !binary(im)
 
-   if (all(bin == FALSE)) {
-     xy <- expand.grid(x = c(-2:0, 2:4), y = 1:10)
-   } else {
-     xy <- scale(where(bin))
-   }
+  # In the case that almost all pixels are black, we'll make a dummy image of
+  # a shape which cannot be mistaken for a number (could've just said return(0)
+  # but this was my first idea and it is a bit more interesting, althoug a big
+  # overkill)
+  if (mean(bin == FALSE) > 0.95) {
+    xy <- expand.grid(x = c(-2:0, 2:4), y = 1:10)
+  } else {
+    # we scale the xy coordinates to have all images on same scale
+    xy <- scale(where(bin))
+  }
 
-   xy <- as.data.frame(xy)
+  xy <- as.data.frame(xy)
 
-   xd <- density(xy[,1])
-   curve_length(xd)
+  # we get the density of the x coordinates and return the arc length
+  xd <- density(xy[ , 1])
+  curve_length(xd)
 }
 
+
+#' Calculate the arc length of the y-coordinate density curve
+#'
+#' @param im - the image representing the field to classify
+#' @return The arc length of the y-coordinate density of the number on the image
 y_arc_length <- function(im) {
-   im <- clip(im, c("20%", "10%", "19%", "10%"))
-   bin <- !binary(im)
+  # first we'll clip the image to remove the bordes and shades
+  im <- clip(im, c("20%", "10%", "19%", "10%"))
+  # then we binarize the image (it will probably already be binary but that
+  # doesn't change anything) and take the negative so the numbers are white
+  # instead of black on white background
+  bin <- !binary(im)
 
-   if (all(bin == FALSE)) {
-     xy <- expand.grid(x = c(-2:0, 2:4), y = 1:10)
-   } else {
-     xy <- scale(where(bin))
-   }
+  # In the case that almost all pixels are black, we'll make a dummy image of
+  # a shape which cannot be mistaken for a number (could've just said return(0)
+  # but this was my first idea and it is a bit more interesting, althoug a big
+  # overkill)
+  if (mean(bin == FALSE) > 0.95) {
+    xy <- expand.grid(x = c(-2:0, 2:4), y = 1:10)
+  } else {
+    # we scale the xy coordinates to have all images on same scale
+    xy <- scale(where(bin))
+  }
 
-   xy <- as.data.frame(xy)
+  xy <- as.data.frame(xy)
 
-   yd <- density(xy[,2])
-   curve_length(yd)
+  # we get the density of the y coordinates and return the arc length
+  yd <- density(xy[ , 2])
+  curve_length(yd)
 }
+
