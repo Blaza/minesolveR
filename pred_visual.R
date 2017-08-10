@@ -2,7 +2,7 @@ library(ggplot2)
 library(ggExtra)
 library(cowplot)
 
-dens <- function(fields, cls) {
+visualise_predictors <- function(fields, cls) {
   indices <- lapply(unique(cls)[-6], function(cl) {
                       sample(which(cls == cl), 1)
              })
