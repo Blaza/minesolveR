@@ -1,5 +1,7 @@
 suppressWarnings(library(imager, warn.conflicts = FALSE, quietly=TRUE))
-script.dir <- dirname(sys.frame(1)$ofile)
+frame_files <- lapply(sys.frames(), function(x) x$ofile)
+frame_files <- Filter(Negate(is.null), frame_files)
+script_dir <- dirname(frame_files[[length(frame_files)]])
 setwd(script.dir)
 source(paste(script.dir, 'player.R', sep='/'))
 

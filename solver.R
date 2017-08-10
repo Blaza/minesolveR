@@ -1,5 +1,7 @@
 library(magrittr)
-script.dir <- dirname(sys.frame(1)$ofile)
+frame_files <- lapply(sys.frames(), function(x) x$ofile)
+frame_files <- Filter(Negate(is.null), frame_files)
+script_dir <- dirname(frame_files[[length(frame_files)]])
 source(paste(script.dir, 'boards.R', sep='/'))
 
 #' Mark fields which are surely not mines
