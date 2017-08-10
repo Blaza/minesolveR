@@ -70,12 +70,11 @@ x_arc_length <- function(im) {
   # instead of black on white background
   bin <- !binary(im)
 
-  # In the case that almost all pixels are black, we'll make a dummy image of
-  # a shape which cannot be mistaken for a number (could've just said return(0)
-  # but this was my first idea and it is a bit more interesting, althoug a big
-  # overkill)
+  # In the case that almost all pixels are black, return a random number from an
+  # interval distant from other categories. We use random to prevent rank
+  # deficiencies we get if we always use a constant.
   if (mean(bin == FALSE) > 0.95) {
-    xy <- expand.grid(x = c(-2:0, 2:4), y = 1:10)
+    return(runif(1, 6.375, 6.4))
   } else {
     # we scale the xy coordinates to have all images on same scale
     xy <- scale(where(bin))
@@ -101,12 +100,11 @@ y_arc_length <- function(im) {
   # instead of black on white background
   bin <- !binary(im)
 
-  # In the case that almost all pixels are black, we'll make a dummy image of
-  # a shape which cannot be mistaken for a number (could've just said return(0)
-  # but this was my first idea and it is a bit more interesting, althoug a big
-  # overkill)
+  # In the case that almost all pixels are black, return a random number from an
+  # interval distant from other categories. We use random to prevent rank
+  # deficiencies we get if we always use a constant.
   if (mean(bin == FALSE) > 0.95) {
-    xy <- expand.grid(x = c(-2:0, 2:4), y = 1:10)
+    return(runif(1, 5.225, 5.25))
   } else {
     # we scale the xy coordinates to have all images on same scale
     xy <- scale(where(bin))
