@@ -208,7 +208,7 @@ solve_board <- function(board, mines) {
 #' @param pre_solve - whether to run solve_board at the beginning
 #' @return A matrix of the same dimension as board, with each element being
 #'         the probability that a mine is on the respective field
-mine_probs <- function(board, mines, n = 1e3, pre_solve = FALSE) {
+get_mine_probs <- function(board, mines, n = 1e3, pre_solve = FALSE) {
   if (pre_solve)
     board <- solve_board(board, mines)
 
