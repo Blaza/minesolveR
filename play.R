@@ -2,10 +2,10 @@ suppressWarnings(library(imager, warn.conflicts = FALSE, quietly=TRUE))
 frame_files <- lapply(sys.frames(), function(x) x$ofile)
 frame_files <- Filter(Negate(is.null), frame_files)
 script_dir <- dirname(frame_files[[length(frame_files)]])
-setwd(script.dir)
-source(paste(script.dir, 'player.R', sep='/'))
+setwd(script_dir)
+source(paste(script_dir, 'player.R', sep='/'))
 
-dir.create(paste(script.dir, 'screens', sep='/'), showWarnings = FALSE)
+dir.create(paste(script_dir, 'screens', sep='/'), showWarnings = FALSE)
 
 fname <- function(i) {
   paste0("screens/screen",i,".png")

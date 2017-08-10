@@ -2,7 +2,7 @@ library(ssoftveR)
 frame_files <- lapply(sys.frames(), function(x) x$ofile)
 frame_files <- Filter(Negate(is.null), frame_files)
 script_dir <- dirname(frame_files[[length(frame_files)]])
-source(paste(script.dir, 'neighbours.R', sep='/'))
+source(paste(script_dir, 'neighbours.R', sep='/'))
 
 #' Generate a minesweeper board
 #'

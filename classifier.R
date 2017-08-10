@@ -2,10 +2,10 @@ library(ssoftveR)
 frame_files <- lapply(sys.frames(), function(x) x$ofile)
 frame_files <- Filter(Negate(is.null), frame_files)
 script_dir <- dirname(frame_files[[length(frame_files)]])
-source(paste(script.dir, 'mines_predictors.R', sep='/'))
+source(paste(script_dir, 'mines_predictors.R', sep='/'))
 
 # we read the saved model from a file
-mines_model <- readRDS(paste(script.dir, 'mines_model.RDS', sep='/'))
+mines_model <- readRDS(paste(script_dir, 'mines_model.RDS', sep='/'))
 
 #' Read a board from a given image
 #'

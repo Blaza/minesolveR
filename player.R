@@ -1,8 +1,8 @@
 frame_files <- lapply(sys.frames(), function(x) x$ofile)
 frame_files <- Filter(Negate(is.null), frame_files)
 script_dir <- dirname(frame_files[[length(frame_files)]])
-source(paste(script.dir, 'solver.R', sep='/'))
-source(paste(script.dir, 'classifier.R', sep='/'))
+source(paste(script_dir, 'solver.R', sep='/'))
+source(paste(script_dir, 'classifier.R', sep='/'))
 
 best_move_gen <- function() {
   move_stack <- data.frame(row, col)
